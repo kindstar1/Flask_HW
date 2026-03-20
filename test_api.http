@@ -1,0 +1,58 @@
+
+### Создание объявления (POST)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "title": "Продам гараж",
+    "description": "Хороший гараж в центре",
+    "owner": "Иван Петров"
+}
+
+### Создание объявления без description (должно работать)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "title": "Сдам квартиру",
+    "owner": "Мария Смирнова"
+}
+
+### Создание объявления без title (ошибка 400)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "description": "Описание",
+    "owner": "Анна"
+}
+
+### Создание объявления без owner (ошибка 400)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "title": "Тест"
+}
+
+### Пустой запрос (ошибка 400)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{}
+
+### Получить объявление по id
+GET http://localhost:5000/ads/1
+
+### Получить несуществующее объявление (должна быть ошибка 404)
+GET http://localhost:5000/ads/999
+
+
+### Удалить объявление
+DELETE http://localhost:5000/ads/2
+
+### Попробовать получить удаленное объявление (должна быть ошибка 404)
+GET http://localhost:5000/ads/1
+
+### Попробовать удалить несуществующее (ошибка 404)
+DELETE http://localhost:5000/ads/999
