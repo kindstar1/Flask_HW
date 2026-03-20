@@ -56,3 +56,218 @@ GET http://localhost:5000/ads/1
 
 ### Попробовать удалить несуществующее (ошибка 404)
 DELETE http://localhost:5000/ads/999
+
+### Регистрация пользователя
+POST http://localhost:5000/register
+Content-Type: application/json
+
+{
+    "name": "Иван Петров",
+    "email": "ivan@example.com",
+    "password": "secret123"
+}
+
+### Авторизация (логин)
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "ivan@example.com",
+    "password": "secret123"
+}
+
+
+
+После добавления авторизации
+
+### Проверка работы сервера
+GET http://localhost:5000/
+
+### ============================================
+### 2. Регистрация пользователей
+### ============================================
+
+### Регистрация пользователя
+POST http://localhost:5000/register
+Content-Type: application/json
+
+{
+    "name": "Андрей Петров",
+    "email": "fjuhgs@example.com",
+    "password": "secret123"
+}
+
+### Регистрация второго пользователя
+POST http://localhost:5000/register
+Content-Type: application/json
+
+{
+    "name": "Мария Смирнова",
+    "email": "maria@example.com",
+    "password": "mypassword"
+}
+
+### Попытка регистрации с уже существующим email (должна быть ошибка 400)
+POST http://localhost:5000/register
+Content-Type: application/json
+
+{
+    "name": "Петр Иванов",
+    "email": "ivan@example.com",
+    "password": "123456"
+}
+
+### Попытка регистрации без обязательных полей (ошибка 400)
+POST http://localhost:5000/register
+Content-Type: application/json
+
+{
+    "name": "Только имя"
+}
+
+### ============================================
+### 3. Авторизация (логин)
+### ============================================
+
+### Логин первого пользователя (успешный)
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "ivan@example.com",
+    "password": "secret123"
+}
+
+### Логин второго пользователя
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "maria@example.com",
+    "password": "mypassword"
+}
+
+### Попытка логина с неверным паролем (ошибка 401)
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "ivan@example.com",
+    "password": "wrongpassword"
+}
+
+### Попытка логина с несуществующим email (ошибка 400)
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "nonexistent@example.com",
+    "password": "secret123"
+}
+
+### ============================================
+### 4. Создание объявлений (требуется авторизация)
+### ============================================
+
+### Создание объявления первым пользователем (Иван)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "title": "Продам гараж",
+    "description": "Хороший гараж в центре, 50 кв.м"
+}
+
+### Создание еще одного объявления первым пользователем
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "title": "Сдам квартиру",
+    "description": "1-комнатная, рядом с метро"
+}
+
+### Создание объявления вторым пользователем (Мария)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "title": "Куплю ноутбук",
+    "description": "MacBook Pro 14 дюймов"
+}
+
+### Создание объявления без description (должно работать, описание станет пустым)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "title": "Услуги репетитора"
+}
+
+### Попытка создать объявление без title (ошибка 400)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "description": "Нет заголовка"
+}
+
+### Попытка создать объявление без авторизации (сначала выйдите из системы или не логиньтесь)
+### Для этого нужно выполнить этот запрос в новой сессии, где нет cookie
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "title": "Это не должно создаться"
+}
+
+### ============================================
+### 5. Получение объявлений (публичный доступ)
+### ============================================
+
+### Получить объявление с id=1
+GET http://localhost:5000/ads/1
+
+### Получить объявление с id=2
+GET http://localhost:5000/ads/2
+
+### Получить объявление с id=3
+GET http://localhost:5000/ads/3
+
+### Попытка получить несуществующее объявление (ошибка 404)
+GET http://localhost:5000/ads/999
+
+### ============================================
+### 6. Удаление объявлений (только для владельца)
+### ============================================
+
+### Удаление объявления id=1 (владелец - Иван, если вы залогинены как Иван)
+DELETE http://localhost:5000/ads/1
+
+### Попытка удалить объявление id=2 (если вы все еще залогинены как Иван, 
+### а объявление id=2 принадлежит Ивану? Проверьте по created_by в ответе GET)
+### Если объявление принадлежит Ивану - удалится, если Марии - ошибка 403
+DELETE http://localhost:5000/ads/2
+
+### ============================================
+### 7. Выход из системы (logout) - если добавили
+### ============================================
+
+### Выход (удаление сессии)
+POST http://localhost:5000/logout
+
+### Попытка создать объявление после выхода (ошибка 401)
+POST http://localhost:5000/ads
+Content-Type: application/json
+
+{
+    "title": "После выхода",
+    "description": "Это не создастся"
+}
+
+### ============================================
+### 8. Получение всех объявлений (если добавили)
+### ============================================
+
+### Получить все объявления
+GET http://localhost:5000/ads
